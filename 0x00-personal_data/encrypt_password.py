@@ -4,8 +4,6 @@
 import bcrypt
 
 
-def hash_password(password: bytes) -> bytes:
+def hash_password(password: str) -> bytes:
     """Hash a password using bcrypt"""
-    if not type(password) is bytes:
-        password = password.encode()
-    return bcrypt.hashpw(password, bcrypt.gensalt())
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
