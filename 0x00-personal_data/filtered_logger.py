@@ -8,7 +8,7 @@ import re
 from typing import List
 
 
-PII_FIELDS = ["ssn", "email", "password", "name", "phone"]
+PII_FIELDS = ("ssn", "email", "password", "name", "phone")
 
 
 def get_logger() -> logging.Logger:
