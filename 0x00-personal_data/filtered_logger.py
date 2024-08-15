@@ -59,3 +59,21 @@ class RedactingFormatter(logging.Formatter):
         """Obfuscate logs based on self.fields"""
         log = super().format(record)
         return filter_datum(self.fields, self.REDACTION, log, self.SEPARATOR)
+
+
+def main():
+    """Entry point of the program."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users;")
+
+    headers = [desc[0] for desc in cursor.description]
+
+    logger = get_logger()
+
+    for row in cursor:
+        formatted = ';'.join([f"{h}={d}" for h, d in zip(headers, row)])
+        logger.info(formatted)
+
+    cursor.close()
+    conn.close()
