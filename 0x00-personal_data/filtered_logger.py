@@ -26,7 +26,7 @@ def get_logger() -> logging.Logger:
     """Create a custom logger."""
     logger = logging.getLogger(name='user_data')
     handler = logging.StreamHandler()
-    handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
     logger.propagate = False
