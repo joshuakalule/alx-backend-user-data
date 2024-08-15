@@ -5,24 +5,21 @@ Custom logger
 
 import logging
 import re
-from mysql.connector import connection
+from mysql.connector.connection import MySQLConnection
 from typing import Iterable
-import os
+from os import getenv
 
 
 PII_FIELDS = ("ssn", "email", "password", "name", "phone")
 
 
-def get_db() -> connection.MySQLConnection:
+def get_db() -> MySQLConnection:
     """Connect to a secure database"""
-    kwargs = {
-        'host': os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost'),
-        'database': os.environ.get('PERSONAL_DATA_DB_NAME'),
-        'user': os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root'),
-        'password': os.environ.get('PERSONAL_DATA_DB_PASSWORD', '')
-    }
-
-    return connection.MySQLConnection(**kwargs)
+    host = getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    user = getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    pwd = getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    db = getenv("PERSONAL_DATA_DB_NAME")
+    return MySQLConnection(user=user, password=pwd, host=host, database=db)
 
 
 def get_logger() -> logging.Logger:
