@@ -8,6 +8,20 @@ import re
 from typing import List
 
 
+PII_FIELDS = ["ssn", "email", "password", "name", "phone"]
+
+
+def get_logger() -> logging.Logger:
+    """Create a custom logger."""
+    logger = logging.getLogger(name='user_data')
+    handler = logging.StreamHandler()
+    handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    return logger
+
+
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
     """Uses a regex to replace occurrences of certain field values"""
