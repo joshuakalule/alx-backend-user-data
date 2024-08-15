@@ -1,14 +1,28 @@
 #!/usr/bin/env python3
 """
-Task 0. Regex-ing
+Custom logger
 """
 
 import logging
 import re
-from typing import List
+from mysql.connector import connection
+from typing import Iterable
+import os
 
 
 PII_FIELDS = ("ssn", "email", "password", "name", "phone")
+
+
+def get_db() -> connection.MySQLConnection:
+    """Connect to a secure database"""
+    kwargs = {
+        'host': os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost'),
+        'database': os.environ.get('PERSONAL_DATA_DB_NAME'),
+        'user': os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root'),
+        'password': os.environ.get('PERSONAL_DATA_DB_PASSWORD', '')
+    }
+
+    return connection.MySQLConnection(**kwargs)
 
 
 def get_logger() -> logging.Logger:
@@ -22,7 +36,7 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def filter_datum(fields: List[str], redaction: str, message: str,
+def filter_datum(fields: Iterable[str], redaction: str, message: str,
                  separator: str) -> str:
     """Uses a regex to replace occurrences of certain field values"""
     for field in fields:
@@ -40,7 +54,7 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields: List[str]):
+    def __init__(self, fields: Iterable[str]):
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
