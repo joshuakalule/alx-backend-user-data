@@ -36,7 +36,7 @@ class BasicAuth(Auth):
         try:
             b = base64.b64decode(base64_authorization_header, validate=True)
             return b.decode('utf-8')
-        except binascii.Error:
+        except Exception as e:
             return None
 
     def extract_user_credentials(self,
@@ -71,3 +71,12 @@ class BasicAuth(Auth):
             if user.is_valid_password(user_pwd):
                 return user
         return None
+
+    def current_user(self, request=None) -> Union[User, None]:
+        """Retrive the current user."""
+        auth_header = self.authorization_header(request)
+        auth_param = self.extract_base64_authorization_header(auth_header)
+        auth_str = self.decode_base64_authorization_header(auth_param)
+        email, password = self.extract_user_credentials(auth_str)
+
+        return self.user_object_from_credentials(email, password)
