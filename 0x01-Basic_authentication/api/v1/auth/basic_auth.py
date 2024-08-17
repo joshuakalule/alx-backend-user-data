@@ -5,7 +5,7 @@ Module to handle Basic authentication
 import binascii
 from api.v1.auth.auth import Auth
 import base64
-from typing import Tuple, TypeVar
+from typing import Tuple, Union
 from models.user import User
 
 
@@ -55,7 +55,7 @@ class BasicAuth(Auth):
     def user_object_from_credentials(self,
                                      user_email: str,
                                      user_pwd: str
-                                     ) -> TypeVar('User'):  # type: ignore
+                                     ) -> Union[User, None]:  # type: ignore
         """Fetches user instance based on email and password"""
         if not user_email or not user_pwd:
             return None
