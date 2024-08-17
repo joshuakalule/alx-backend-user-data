@@ -13,7 +13,13 @@ class Auth:
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Method to enforce auth"""
-        return False
+        if not path or not excluded_paths or len(excluded_paths) == 0:
+            return True
+        safe_path = path if path[-1] == '/' else path + '/'
+        if safe_path in excluded_paths:
+            return False
+
+        return True
 
     def authorization_header(self, request=None) -> str:
         """Method to fetch authorization header"""
