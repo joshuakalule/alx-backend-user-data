@@ -16,8 +16,11 @@ class Auth:
         if not path or not excluded_paths or len(excluded_paths) == 0:
             return True
         safe_path = path if path[-1] == '/' else path + '/'
-        if safe_path in excluded_paths:
-            return False
+        for xpath in excluded_paths:
+            if safe_path == xpath:
+                return False
+            if xpath[-1] == '*' and path.startswith(xpath[:-1]):
+                return False
 
         return True
 
