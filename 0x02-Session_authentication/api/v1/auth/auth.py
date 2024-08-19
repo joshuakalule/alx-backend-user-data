@@ -2,14 +2,22 @@
 """
 Module to handle authentication
 """
-from flask import request
 from typing import List, TypeVar
+import os
 
 
 class Auth:
     """
     Class to handle Authentication
     """
+
+    def session_cookie(self, request=None):
+        """Retrieve cookie from request."""
+        if not request:
+            return None
+        cookie_key = os.getenv('SESSION_NAME', '_my_session_id')
+        return request.cookies.get(cookie_key, None)
+
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Method to enforce auth"""
