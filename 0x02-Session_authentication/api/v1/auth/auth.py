@@ -18,7 +18,6 @@ class Auth:
         cookie_key = os.getenv('SESSION_NAME', '_my_session_id')
         return request.cookies.get(cookie_key, None)
 
-
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Method to enforce auth"""
         if not path or not excluded_paths or len(excluded_paths) == 0:
