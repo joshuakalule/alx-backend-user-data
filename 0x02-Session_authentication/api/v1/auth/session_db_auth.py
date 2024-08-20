@@ -3,6 +3,7 @@
 Module to handle Sessions from the database
 """
 from api.v1.auth.session_exp_auth import SessionExpAuth
+from datetime import datetime, timedelta
 from models.user_session import UserSession
 
 
@@ -27,9 +28,18 @@ class SessionDBAuth(SessionExpAuth):
         try:
             search_results = UserSession.search({'session_id': session_id})
             user_session_obj = search_results[0]
-            return user_session_obj.user_id
         except Exception as e:
             return None
+        created_at = user_session_obj.created_at
+        user_id = user_session_obj.user_id
+
+        if self.session_duration <= 0:
+            return user_id
+
+        expire_at = created_at + timedelta(seconds=self.session_duration)
+        if expire_at < datetime.now():
+            return None
+        return user_id
 
     def destroy_session(self, request=None):
         """Deletes the session in db to implement logout"""
@@ -39,10 +49,16 @@ class SessionDBAuth(SessionExpAuth):
         if not session_id:
             return False
         try:
-            user_session_obj = UserSession.search({'session_id': session_id})
+            search_results = UserSession.search({'session_id': session_id})
+            user_session_obj = search_results[0]
             if not user_session_obj:
                 return False
+            # Delete object
             user_session_obj.remove()
+            # Remove session_id - user_id pair
+            if session_id in self.user_id_by_session_id:
+                del self.user_id_by_session_id[session_id]
             return True
-        except Exception:
+        except Exception as e:
+            # print("Exception: ", e)
             return False
