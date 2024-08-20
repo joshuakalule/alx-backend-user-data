@@ -10,3 +10,6 @@ from api.v1.views.users import *
 from api.v1.views.session_auth import *
 
 User.load_from_file()
+
+from models.user_session import UserSession
+UserSession.load_from_file()
