@@ -5,6 +5,7 @@ from bcrypt import hashpw, gensalt, checkpw
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
+from typing import Optional
 from uuid import uuid4
 
 
@@ -27,11 +28,22 @@ class Auth:
     def __init__(self):
         self._db = DB()
 
+    def create_session(self, email: str) -> Optional[str]:
+        """Create user session and return session_id"""
+        try:
+            found_user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return None
+
+        session_id = _generate_uuid()
+        self._db.update_user(found_user.id, session_id=session_id)
+        return session_id
+
     def valid_login(self, email: str, password: str) -> bool:
         """Returns True if email exists and is associated with password"""
         try:
             found_user = self._db.find_user_by(email=email)
-        except Exception:
+        except NoResultFound:
             return False
 
         bytes_password = password.encode('utf-8')
