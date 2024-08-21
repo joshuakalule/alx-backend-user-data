@@ -8,9 +8,9 @@ from sqlalchemy.orm.exc import NoResultFound
 from uuid import uuid4
 
 
-def _generate_uuid():
+def _generate_uuid() -> str:
     """Returns a string representation of a new uuid"""
-    return uuid4()
+    return str(uuid4())
 
 
 def _hash_password(password: str) -> bytes:
