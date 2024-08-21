@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 from user import Base, User
 
 
@@ -45,3 +46,22 @@ class DB:
             raise NoResultFound("No results found")
 
         return results.first()
+
+    def update_user(self, user_id, **kwargs) -> None:
+        """Updates a user using user_id and arbitrary kwargs."""
+
+        try:
+            user = self.find_user_by(id=user_id)
+        except NoResultFound:
+            return None
+        except InvalidRequestError:
+            return None
+
+        for attr, value in kwargs.items():
+            if not hasattr(user, attr):
+                err = f"'{attr}' does not correspond to a user attribute"
+                raise ValueError(err)
+            setattr(user, attr, value)
+
+        self._session.commit()
+        return None
