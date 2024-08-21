@@ -47,7 +47,7 @@ class DB:
 
         return results.first()
 
-    def update_user(self, user_id, **kwargs) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
         """Updates a user using user_id and arbitrary kwargs."""
 
         try:
