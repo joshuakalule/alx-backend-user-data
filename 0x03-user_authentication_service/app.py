@@ -2,10 +2,23 @@
 """Basic Flask app."""
 
 from auth import Auth
-from flask import abort, Flask, jsonify, request
+from flask import abort, Flask, jsonify, redirect, request, url_for
 
 AUTH = Auth()
 app = Flask(__name__)
+
+
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
+def logout():
+    """End point to log out a user."""
+    session_id = request.cookies.get('session_id')
+    if not session_id:
+        abort(400)
+    found_user = AUTH.get_user_from_session_id(session_id)
+    if not found_user:
+        abort(403)
+    AUTH.destroy_session(found_user.id)
+    return redirect(url_for('home'))
 
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
