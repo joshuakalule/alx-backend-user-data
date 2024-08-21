@@ -2,3 +2,5 @@ main.py
 **/__pycache__/**
 *.default
 .db_*.json
+.vscode/**
+*.db
