@@ -13,7 +13,7 @@ def logout():
     """End point to log out a user."""
     session_id = request.cookies.get('session_id')
     if not session_id:
-        abort(400)
+        abort(403)
     found_user = AUTH.get_user_from_session_id(session_id)
     if not found_user:
         abort(403)
