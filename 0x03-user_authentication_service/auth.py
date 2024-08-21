@@ -28,6 +28,21 @@ class Auth:
     def __init__(self):
         self._db = DB()
 
+    def destroy_session(self, user_id: int) -> None:
+        """Release user session by setting session_id attr to None"""
+        self._db.update_user(user_id, session_id=None)
+
+    def get_user_from_session_id(self, session_id: str) -> Optional[User]:
+        """Retrieve user based on session id"""
+        if not session_id or type(session_id) != str:
+            return None
+
+        try:
+            found_user = self._db.find_user_by(session_id=session_id)
+            return found_user
+        except Exception:
+            return None
+
     def create_session(self, email: str) -> Optional[str]:
         """Create user session and return session_id"""
         try:
