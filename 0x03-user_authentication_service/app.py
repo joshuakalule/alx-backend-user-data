@@ -8,9 +8,30 @@ AUTH = Auth()
 app = Flask(__name__)
 
 
+@app.route('/reset_password', methods=['PUT'], strict_slashes=False)
+def update_password():
+    """end point reset user password"""
+    email = request.form.get('email')
+    reset_token = request.form.get('reset_token')
+    new_password = request.form.get('new_password')
+
+    if not (email and reset_token and new_password):
+        abort(403)
+    try:
+        AUTH.update_password(reset_token, new_password)
+    except ValueError:
+        abort(403)
+
+    payload = {
+        "email": email,
+        "message": "Password updated"
+    }
+    return jsonify(payload), 200
+
+
 @app.route('/reset_password', methods=['POST'], strict_slashes=False)
 def get_reset_password_token():
-    """end point to hand reseting passowrd."""
+    """end point to initiate reseting passowrd."""
     email = request.form.get('email')
 
     try:
